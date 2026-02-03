@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <title>Validação de Certificado das Formações</title>
+  <title>Validação de Certificado IAM</title>
 
   <style>
     body {
@@ -16,34 +16,28 @@
     }
 
     .card {
-      background: #ffffff;
+      background: #fff;
       padding: 30px;
-      width: 100%;
-      max-width: 420px;
-      border-radius: 8px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      width: 360px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
       text-align: center;
-    }
-
-    h1 {
-      margin-bottom: 20px;
     }
 
     input {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
+      margin-top: 15px;
       font-size: 16px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
     }
 
     button {
       width: 100%;
+      margin-top: 15px;
       padding: 12px;
       font-size: 16px;
       background: #1a73e8;
-      color: white;
+      color: #fff;
       border: none;
       border-radius: 5px;
       cursor: pointer;
@@ -53,58 +47,72 @@
       background: #1558b0;
     }
 
-    #resultado {
+    .resultado {
       margin-top: 20px;
       font-weight: bold;
     }
+
+    .ok {
+      color: #2e7d32;
+    }
+
+    .erro {
+      color: #c62828;
+    }
   </style>
 </head>
-
 <body>
-  <div class="card">
-    <h1>Validação de Certificado das Formações - IAM</h1>
 
-    <input
-      type="text"
-      id="codigo"
-      placeholder="Ex: TO0Z-S2JU"
-    />
+  <div class="card">
+    <h2>Validação de Certificado IAM</h2>
+
+    <input id="codigo" placeholder="Ex: TO0Z-S2JU" />
 
     <button onclick="validar()">Validar certificado</button>
 
-    <div id="resultado"></div>
+    <div id="resultado" class="resultado"></div>
   </div>
 
-  <script>
-    function validar() {
-      const codigo = document.getElementById("codigo").value.trim();
-      const resultado = document.getElementById("resultado");
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbxtVsIwHZHdJF7-CvV4_umueH6o8UZX-ElhWCVPiAFy9xeaXsfKhc893ozU-Jvb9RWp/exec";
 
-      if (!codigo) {
-        resultado.innerHTML = "⚠️ Informe o código do certificado.";
-        resultado.style.color = "#d93025";
-        return;
+  async function validar() {
+    const codigo = document.getElementById("codigo").value.trim();
+    const resultado = document.getElementById("resultado");
+
+    resultado.innerHTML = "Validando...";
+
+    if (!codigo) {
+      resultado.innerHTML = "<span class='erro'>Digite um código.</span>";
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}?codigo=${encodeURIComponent(codigo)}`);
+      const data = await response.json();
+
+      console.log("Resposta da API:", data);
+
+      if (data.sucesso) {
+        resultado.innerHTML = `
+          <div class="ok">
+            ✅ Certificado válido<br><br>
+            Código: ${data.codigo}<br>
+            Nome: ${data.nome || "-"}<br>
+            Curso: ${data.curso || "-"}
+          </div>
+        `;
+      } else {
+        resultado.innerHTML = `<span class="erro">❌ ${data.mensagem}</span>`;
       }
 
-      // 🔗 URL DO SEU APPS SCRIPT (VALIDAÇÃO)
-      const url =
-        "https://script.google.com/macros/s/AKfycbxDBt89MJQjMxTOYrFmM0ZO_elqMcbkLasLfjDal3WSjc6xmqEX_GEGkPaNtEkHUW/exec?codigo=" +
-        encodeURIComponent(codigo);
-
-      resultado.innerHTML = "🔎 Validando...";
-      resultado.style.color = "#555";
-
-      fetch(url)
-        .then((response) => response.text())
-        .then((html) => {
-          document.body.innerHTML = html;
-        })
-        .catch(() => {
-          resultado.innerHTML = "❌ Erro ao validar certificado.";
-          resultado.style.color = "#d93025";
-        });
+    } catch (err) {
+      console.error(err);
+      resultado.innerHTML = "<span class='erro'>Erro ao validar certificado.</span>";
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>
 
