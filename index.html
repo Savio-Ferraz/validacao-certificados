@@ -83,43 +83,44 @@
 
   <!-- ⬇️ AQUI ENTRA O PASSO 4 -->
   <script>
-    async function validar() {
-      const codigo = document.getElementById("codigo").value.trim();
-      const resultado = document.getElementById("resultado");
+  const API_URL = "https://script.google.com/macros/s/SEU_ID_REAL_AQUI/exec";
 
-      if (!codigo) {
-        resultado.innerHTML = "Digite um código.";
-        return;
-      }
+  async function validar() {
+    const codigo = document.getElementById("codigo").value.trim();
+    const resultado = document.getElementById("resultado");
 
-      resultado.innerHTML = "Validando...";
-
-      const url = "https://script.google.com/macros/s/AKfycbyj9u-q6tFIDR1Vu4lasGDKzRIwS3dbUFqf5EN8bKuI5WSxZughEqYf4i-6hc5ONtvk/exec?codigo=" + encodeURIComponent(codigo);
-
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data.valido) {
-          resultado.innerHTML = `
-            <span style="color:green; font-weight:bold;">
-              ✅ Certificado válido
-            </span><br>
-            Nome: ${data.nome}<br>
-            Código: ${data.codigo}
-          `;
-        } else {
-          resultado.innerHTML = `
-            <span style="color:red; font-weight:bold;">
-              ❌ ${data.mensagem}
-            </span>
-          `;
-        }
-      } catch (e) {
-        resultado.innerHTML = "Erro ao validar.";
-      }
+    if (!codigo) {
+      resultado.innerHTML = "<span class='erro'>Digite um código.</span>";
+      return;
     }
-  </script>
+
+    resultado.innerHTML = "Validando...";
+
+    try {
+      const resposta = await fetch(`${API_URL}?codigo=${encodeURIComponent(codigo)}`);
+      const dados = await resposta.json();
+
+      // 🔒 TRATAMENTO CORRETO
+      if (dados.sucesso === true) {
+        resultado.innerHTML = `
+          <span class="sucesso">✅ Certificado válido</span><br><br>
+          <strong>Nome:</strong> ${dados.nome}<br>
+          <strong>Formação:</strong> ${dados.curso}<br>
+          <strong>Código:</strong> ${dados.codigo}
+        `;
+      } else {
+        resultado.innerHTML = `
+          <span class="erro">❌ ${dados.mensagem || "Código inválido"}</span>
+        `;
+      }
+
+    } catch (erro) {
+      resultado.innerHTML = "<span class='erro'>Erro ao conectar com o servidor.</span>";
+      console.error(erro);
+    }
+  }
+</script>
+
   <!-- ⬆️ FIM DO PASSO 4 -->
 
 </body>
