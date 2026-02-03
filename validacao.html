@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Validação de Certificado</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 20px;
+    }
+    .box {
+      background: #fff;
+      max-width: 500px;
+      margin: auto;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    button {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Validação de Certificado</h2>
+  <p>Digite o código do certificado:</p>
+
+  <input id="codigo" placeholder="Ex: A9F3-K2Q8">
+  <button onclick="validar()">Validar certificado</button>
+
+  <div id="resultado"></div>
+</div>
+
+<script>
+function validar() {
+  var codigo = document.getElementById('codigo').value;
+  if (!codigo) {
+    alert('Digite o código');
+    return;
+  }
+
+  fetch('COLE_AQUI_SUA_URL_DO_WEBAPP?codigo=' + encodeURIComponent(codigo))
+    .then(r => r.text())
+    .then(txt => {
+      var p = txt.split('|');
+      var res = document.getElementById('resultado');
+
+      if (p[0] === 'OK') {
+        res.innerHTML =
+          '<h3 style="color:green">✅ Certificado válido</h3>' +
+          '<p><b>Nome:</b> ' + p[1] + '</p>' +
+          '<p><b>Tipo:</b> ' + p[2] + '</p>' +
+          '<p><b>Código:</b> ' + p[3] + '</p>';
+      } else {
+        res.innerHTML =
+          '<h3 style="color:red">❌ Certificado inválido</h3>';
+      }
+    });
+}
+</script>
+
+</body>
+</html>
