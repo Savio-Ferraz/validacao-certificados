@@ -1,75 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Validação de Certificado</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f4f6f8;
-      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    .box {
-      background: #fff;
-      max-width: 500px;
-      margin: auto;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    input, button {
+
+    .card {
+      background: #ffffff;
+      padding: 30px;
       width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
+      max-width: 420px;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
     }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
     button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
       background: #1a73e8;
       color: white;
       border: none;
+      border-radius: 5px;
       cursor: pointer;
+    }
+
+    button:hover {
+      background: #1558b0;
+    }
+
+    #resultado {
+      margin-top: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
+
 <body>
+  <div class="card">
+    <h1>Validação de Certificado</h1>
 
-<div class="box">
-  <h2>Validação de Certificado</h2>
-  <p>Digite o código do certificado:</p>
+    <input
+      type="text"
+      id="codigo"
+      placeholder="Ex: TO0Z-S2JU"
+    />
 
-  <input id="codigo" placeholder="Ex: A9F3-K2Q8">
-  <button onclick="validar()">Validar certificado</button>
+    <button onclick="validar()">Validar certificado</button>
 
-  <div id="resultado"></div>
-</div>
+    <div id="resultado"></div>
+  </div>
 
-<script>
-function validar() {
-  var codigo = document.getElementById('codigo').value;
-  if (!codigo) {
-    alert('Digite o código');
-    return;
-  }
+  <script>
+    function validar() {
+      const codigo = document.getElementById("codigo").value.trim();
+      const resultado = document.getElementById("resultado");
 
-  fetch('COLE_AQUI_SUA_URL_DO_WEBAPP?codigo=' + encodeURIComponent(codigo))
-    .then(r => r.text())
-    .then(txt => {
-      var p = txt.split('|');
-      var res = document.getElementById('resultado');
-
-      if (p[0] === 'OK') {
-        res.innerHTML =
-          '<h3 style="color:green">✅ Certificado válido</h3>' +
-          '<p><b>Nome:</b> ' + p[1] + '</p>' +
-          '<p><b>Tipo:</b> ' + p[2] + '</p>' +
-          '<p><b>Código:</b> ' + p[3] + '</p>';
-      } else {
-        res.innerHTML =
-          '<h3 style="color:red">❌ Certificado inválido</h3>';
+      if (!codigo) {
+        resultado.innerHTML = "⚠️ Informe o código do certificado.";
+        resultado.style.color = "#d93025";
+        return;
       }
-    });
-}
-</script>
 
+      // 🔗 URL DO SEU APPS SCRIPT (VALIDAÇÃO)
+      const url =
+        "https://script.google.com/macros/s/AKfycbxDBt89MJQjMxTOYrFmM0ZO_elqMcbkLasLfjDal3WSjc6xmqEX_GEGkPaNtEkHUW/exec?codigo=" +
+        encodeURIComponent(codigo);
+
+      resultado.innerHTML = "🔎 Validando...";
+      resultado.style.color = "#555";
+
+      fetch(url)
+        .then((response) => response.text())
+        .then((html) => {
+          document.body.innerHTML = html;
+        })
+        .catch(() => {
+          resultado.innerHTML = "❌ Erro ao validar certificado.";
+          resultado.style.color = "#d93025";
+        });
+    }
+  </script>
 </body>
 </html>
+
