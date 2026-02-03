@@ -62,57 +62,65 @@
   </style>
 </head>
 <body>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Validação de Certificado</title>
 
-  <div class="card">
-    <h2>Validação de Certificado IAM</h2>
+  <!-- seu CSS aqui -->
+</head>
 
-    <input id="codigo" placeholder="Ex: TO0Z-S2JU" />
+<body>
 
-    <button onclick="validar()">Validar certificado</button>
+  <!-- CONTEÚDO DA PÁGINA -->
+  <h2>Validação de Certificado</h2>
 
-    <div id="resultado" class="resultado"></div>
-  </div>
+  <input id="codigo" placeholder="Digite seu código">
+  <button onclick="validar()">Validar certificado</button>
 
-<script>
-  const API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjA6rrLPWD26Lw4cAUhdrU3YDjzDqasc5puwKc3XbLn5gw8Pqlu7YHEHroOmSC_djXkGNzkNbII4FvVz2V6u-L3Y_R2IfbRWPic7q3UFx_kLY6bxnQ-CAZdshg1YmdL72V4GnK4Qa5o2-o4M1q-pRHRYC8lZs4WX46O9Bp6YTFmfvE8l4j_9FbrcVu_pNZdWP-ecWfSm36HmkfsQufWREmo4CkdD0AO5xR6GX2jsg1Jwf6OLYI-WBi434oJoBJj4Skceh7HzY9gDqIHN_6JuLdncYO50Q&lib=MRr6pNQdxHLPs6Kz2RuBya-jag8hAtVU_";
+  <div id="resultado"></div>
 
-  async function validar() {
-    const codigo = document.getElementById("codigo").value.trim();
-    const resultado = document.getElementById("resultado");
+  <!-- ⬇️ AQUI ENTRA O PASSO 4 -->
+  <script>
+    async function validar() {
+      const codigo = document.getElementById("codigo").value.trim();
+      const resultado = document.getElementById("resultado");
 
-    resultado.innerHTML = "Validando...";
-
-    if (!codigo) {
-      resultado.innerHTML = "<span class='erro'>Digite um código.</span>";
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}?codigo=${encodeURIComponent(codigo)}`);
-      const data = await response.json();
-
-      console.log("Resposta da API:", data);
-
-      if (data.sucesso) {
-        resultado.innerHTML = `
-          <div class="ok">
-            ✅ Certificado válido<br><br>
-            Código: ${data.codigo}<br>
-            Nome: ${data.nome || "-"}<br>
-            Curso: ${data.curso || "-"}
-          </div>
-        `;
-      } else {
-        resultado.innerHTML = `<span class="erro">❌ ${data.mensagem}</span>`;
+      if (!codigo) {
+        resultado.innerHTML = "Digite um código.";
+        return;
       }
 
-    } catch (err) {
-      console.error(err);
-      resultado.innerHTML = "<span class='erro'>Erro ao validar certificado.</span>";
+      resultado.innerHTML = "Validando...";
+
+      const url = "SUA_URL_DO_WEBAPP_AQUI?codigo=" + encodeURIComponent(codigo);
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.valido) {
+          resultado.innerHTML = `
+            <span style="color:green; font-weight:bold;">
+              ✅ Certificado válido
+            </span><br>
+            Nome: ${data.nome}<br>
+            Código: ${data.codigo}
+          `;
+        } else {
+          resultado.innerHTML = `
+            <span style="color:red; font-weight:bold;">
+              ❌ ${data.mensagem}
+            </span>
+          `;
+        }
+      } catch (e) {
+        resultado.innerHTML = "Erro ao validar.";
+      }
     }
-  }
-</script>
+  </script>
+  <!-- ⬆️ FIM DO PASSO 4 -->
 
 </body>
 </html>
-
