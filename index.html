@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Validação de Certificado IAM</title>
 
   <style>
@@ -47,12 +47,12 @@
       background: #1558b0;
     }
 
-    .resultado {
+    #resultado {
       margin-top: 20px;
       font-weight: bold;
     }
 
-    .ok {
+    .sucesso {
       color: #2e7d32;
     }
 
@@ -61,67 +61,58 @@
     }
   </style>
 </head>
-<body>
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Validação de Certificado</title>
-
-  <!-- seu CSS aqui -->
-</head>
 
 <body>
 
-  <!-- CONTEÚDO DA PÁGINA -->
-  <h2>Validação de Certificado</h2>
+  <div class="card">
+    <h2>Validação de Certificado</h2>
 
-  <input id="codigo" placeholder="Digite seu código">
-  <button onclick="validar()">Validar certificado</button>
+    <input id="codigo" placeholder="Digite seu código">
 
-  <div id="resultado"></div>
+    <button onclick="validar()">Validar certificado</button>
 
-  <!-- ⬇️ AQUI ENTRA O PASSO 4 -->
+    <div id="resultado"></div>
+  </div>
+
+  <!-- SCRIPT SEMPRE NO FINAL -->
   <script>
-  const API_URL = "https://script.google.com/macros/s/SEU_ID_REAL_AQUI/exec";
+    const API_URL = "https://script.google.com/macros/s/SEU_ID_REAL_AQUI/exec";
 
-  async function validar() {
-    const codigo = document.getElementById("codigo").value.trim();
-    const resultado = document.getElementById("resultado");
+    async function validar() {
+      const codigo = document.getElementById("codigo").value.trim();
+      const resultado = document.getElementById("resultado");
 
-    if (!codigo) {
-      resultado.innerHTML = "<span class='erro'>Digite um código.</span>";
-      return;
-    }
-
-    resultado.innerHTML = "Validando...";
-
-    try {
-      const resposta = await fetch(`${API_URL}?codigo=${encodeURIComponent(codigo)}`);
-      const dados = await resposta.json();
-
-      // 🔒 TRATAMENTO CORRETO
-      if (dados.sucesso === true) {
-        resultado.innerHTML = `
-          <span class="sucesso">✅ Certificado válido</span><br><br>
-          <strong>Nome:</strong> ${dados.nome}<br>
-          <strong>Formação:</strong> ${dados.curso}<br>
-          <strong>Código:</strong> ${dados.codigo}
-        `;
-      } else {
-        resultado.innerHTML = `
-          <span class="erro">❌ ${dados.mensagem || "Código inválido"}</span>
-        `;
+      if (!codigo) {
+        resultado.innerHTML = "<span class='erro'>Digite um código.</span>";
+        return;
       }
 
-    } catch (erro) {
-      resultado.innerHTML = "<span class='erro'>Erro ao conectar com o servidor.</span>";
-      console.error(erro);
-    }
-  }
-</script>
+      resultado.innerHTML = "Validando...";
 
-  <!-- ⬆️ FIM DO PASSO 4 -->
+      try {
+        const resposta = await fetch(`${API_URL}?codigo=${encodeURIComponent(codigo)}`);
+        const dados = await resposta.json();
+
+        if (dados.sucesso === true) {
+          resultado.innerHTML = `
+            <span class="sucesso">✅ Certificado válido</span><br><br>
+            <strong>Nome:</strong> ${dados.nome}<br>
+            <strong>Formação:</strong> ${dados.curso}<br>
+            <strong>Código:</strong> ${dados.codigo}
+          `;
+        } else {
+          resultado.innerHTML = `
+            <span class="erro">❌ ${dados.mensagem || "Código inválido"}</span>
+          `;
+        }
+
+      } catch (erro) {
+        resultado.innerHTML = "<span class='erro'>Erro ao conectar com o servidor.</span>";
+        console.error(erro);
+      }
+    }
+  </script>
 
 </body>
 </html>
+
